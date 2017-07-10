@@ -32,4 +32,20 @@ describe Oystercard do
       expect(card.balance).to eq(ARBITRARY_TOP_UP - ARBITRARY_FARE)
     end
   end
+
+  describe '#touch_in' do
+    before { card.touch_in }
+    it { should be_in_journey }
+  end
+
+  describe '#touch_out' do
+    before { card.touch_out }
+    it { should_not be_in_journey }
+  end
+
+  describe '#in_journey?' do
+    it 'returns false for a new card' do
+       should_not be_in_journey
+    end
+  end
 end
