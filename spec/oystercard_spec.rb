@@ -34,8 +34,18 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
-    before { card.touch_in }
-    it { should be_in_journey }
+    context "insufficient funds" do
+      it 'raises an error if the card has insufficient funds' do
+        expect{card.touch_in}.to raise_error("Insufficient funds, please top up")
+      end
+    end
+    context "sufficient funds" do
+      before do
+        card.top_up(described_class::MINIMUM_BALANCE)
+        card.touch_in
+      end
+      it { should be_in_journey }
+    end
   end
 
   describe '#touch_out' do
