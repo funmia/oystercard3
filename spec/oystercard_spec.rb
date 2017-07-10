@@ -3,6 +3,7 @@ require 'oystercard'
 describe Oystercard do
   subject(:card) { described_class.new }
   ARBITRARY_TOP_UP = 10
+  ARBITRARY_FARE = 2
 
   describe '#initialize' do
     it 'creates a card with a zero balance' do
@@ -19,6 +20,16 @@ describe Oystercard do
     it 'tops up the card with the given amount' do
       card.top_up(ARBITRARY_TOP_UP)
       expect(card.balance).to eq ARBITRARY_TOP_UP
+    end
+  end
+
+  describe '#deduct' do
+    before do
+      card.top_up(ARBITRARY_TOP_UP)
+    end
+    it 'deducts the fare from the card balance' do
+      card.deduct(ARBITRARY_FARE)
+      expect(card.balance).to eq(ARBITRARY_TOP_UP - ARBITRARY_FARE)
     end
   end
 end
