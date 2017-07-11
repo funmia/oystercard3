@@ -1,13 +1,14 @@
 require 'oystercard'
 
 describe Oystercard do
-  subject(:card) { described_class.new }
+  before {@default_balance = 5}
+  subject(:card) { described_class.new(@default_balance) }
   ARBITRARY_TOP_UP = 10
-  ARBITRARY_FARE = 2
+  ARBITRARY_FARE = 1
 
   describe '#initialize' do
-    it 'creates a card with a zero balance' do
-      expect(card.balance).to eq 0
+    it 'creates a card with a default balance' do
+      expect(card.balance).to eq @default_balance
     end
   end
 
@@ -19,29 +20,22 @@ describe Oystercard do
 
     it 'tops up the card with the given amount' do
       card.top_up(ARBITRARY_TOP_UP)
-      expect(card.balance).to eq ARBITRARY_TOP_UP
+      expect(card.balance).to eq ARBITRARY_TOP_UP + @default_balance
     end
   end
 
-  describe '#deduct' do
-    before do
-      card.top_up(ARBITRARY_TOP_UP)
-    end
-    it 'deducts the fare from the card balance' do
-      card.deduct(ARBITRARY_FARE)
-      expect(card.balance).to eq(ARBITRARY_TOP_UP - ARBITRARY_FARE)
-    end
-  end
+
 
   describe '#touch_in' do
     context "insufficient funds" do
+      before {@default_balance = 0}
       it 'raises an error if the card has insufficient funds' do
         expect{card.touch_in}.to raise_error("Insufficient funds, please top up")
       end
     end
     context "sufficient funds" do
       before do
-        card.top_up(described_class::MINIMUM_BALANCE)
+        card.top_up(described_class::MINIMUM_FARE)
         card.touch_in
       end
       it { should be_in_journey }
@@ -49,8 +43,14 @@ describe Oystercard do
   end
 
   describe '#touch_out' do
-    before { card.touch_out }
-    it { should_not be_in_journey }
+    before { card.touch_in }
+    it "should not be in journey after touching out" do
+      card.touch_out
+      expect(card.in_journey?).to eq false
+    end
+    it "reduces the balance on touch out by the minimum fare" do
+      expect{card.touch_out}.to change{card.balance}.by(-ARBITRARY_FARE)
+    end
   end
 
   describe '#in_journey?' do
