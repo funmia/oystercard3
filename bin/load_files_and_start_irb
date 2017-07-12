@@ -3,5 +3,6 @@ require 'irb'
 
 puts 'Loading files..'
 require './lib/oystercard.rb'
+require './lib/station.rb'
 
 IRB.start
