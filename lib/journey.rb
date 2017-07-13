@@ -1,5 +1,3 @@
-require_relative 'oystercard'
-
 class Journey
 
   PENALTY_FARE = 6
@@ -7,8 +5,8 @@ class Journey
 
   attr_reader :entry_station, :other_station
 
-  def initialize
-    @entry_station = nil
+  def initialize(entry_station = nil)
+    @entry_station = entry_station
     @exit_station = nil
     @fare = PENALTY_FARE
   end
@@ -19,7 +17,7 @@ class Journey
 
   def finish(exit_station)
     @exit_station = exit_station
-    fare 
+    fare
     self
   end
 
