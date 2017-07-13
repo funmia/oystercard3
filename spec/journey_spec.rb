@@ -2,9 +2,11 @@ require 'journey'
 
 describe Journey do
 
-  subject(:journey) { described_class.new(entry_station) }
+  subject(:journey) { described_class.new }
   let(:entry_station) { :moorgate }
-  let(:other_station) {double :other_station}
+  let(:exit_station) {double :other_station}
+
+  before { journey.start(entry_station) }
 
     it 'knows if a journey is not complete' do
       expect(journey).not_to be_complete
@@ -23,9 +25,13 @@ describe Journey do
       expect(subject.fare).to eq Journey::PENALTY_FARE
     end
 
+    it "returns itself when exiting a journey" do
+      expect(journey.finish(exit_station)).to eq(journey)
+    end
+
     context 'when given an exit station' do
       before do
-        journey.finish(other_station)
+        journey.finish(exit_station)
       end
 
       it 'calculates a fare' do
@@ -34,10 +40,6 @@ describe Journey do
 
       it 'knows if a journey is complete' do
         expect(journey).to be_complete
-      end
-
-      it "returns itself when exiting a journey" do
-        expect(subject.finish(other_station)).to eq({entry_station => other_station})
       end
     end
   end
