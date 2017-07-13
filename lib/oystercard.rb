@@ -18,11 +18,15 @@ class Oystercard
   end
 
   def touch_in(station)
-    raise('Insufficient funds, please top up') if insufficient_funds?
-    @in_journey = true
-    @journey = Journey.new
-    @journey.start(station)
-    # @entry_station = @current_journey
+    if in_journey?
+      add_journey(@journey)
+      deduct(@journeys.last.fare)
+    else
+      raise('Insufficient funds, please top up') if insufficient_funds?
+      @in_journey = true
+      @journey = Journey.new
+      @journey.start(station)
+    end
   end
 
   def touch_out(station)
@@ -60,5 +64,6 @@ class Oystercard
 
   def add_journey(journey)
     @journeys << journey
+    @journey = Journey.new
   end
 end
