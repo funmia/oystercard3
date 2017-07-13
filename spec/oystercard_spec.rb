@@ -33,10 +33,6 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
-    it 'stores the entry station of the current journey' do
-      card.touch_in(station)
-      expect(card.entry_station).to eq station
-    end
 
     context 'insufficient funds' do
       before { @default_balance = 0 }
@@ -86,7 +82,7 @@ describe Oystercard do
     before { card.touch_out(:bank) }
 
     it 'is expected to create one journey' do
-      expect(card.journeys).to eq [{ waterloo: :bank }]
+      expect(card.journeys.count).to eq 1
     end
   end
 end
